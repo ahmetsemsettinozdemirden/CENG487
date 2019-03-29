@@ -1,19 +1,29 @@
-# CENG 487 Assignment1 by
+# CENG 487 Assignment2 by
 # Ahmet Semsettin Ozdemirden
 # StudentNo: 230201043
 # Date: 03-2019
+
+# References:
+# https://stackoverflow.com/questions/628796/what-does-glloadidentity-do-in-opengl
+# http://www.songho.ca/opengl/gl_projectionmatrix.html
+# http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
+# https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glPushMatrix.xml
+# http://makble.com/opengl-matrix-stacks-and-current-matrix
+# https://www.glprogramming.com/red/chapter03.html
 
 # Note:
 # -----
 # This Uses PyOpenGL and PyOpenGL_accelerate packages.  It also uses GLUT for UI.
 # To get proper GLUT support on linux don't forget to install python-opengl package using apt
+import sys
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-from vec3d import Vec3d
-from mat3d import Mat3d
-from primitive import Primitive
-import sys
+
+from scene.mainscene import MainScene
+from factory.boxfactory import BoxFactory
+from factory.camerafactory import CameraFactory
+from camera import Camera
 
 # Some api in the chain is translating the keystrokes to this octal string
 # so instead of saying: ESCAPE = 27, we use the following.
@@ -22,27 +32,13 @@ ESCAPE = '\033'
 # Number of the glut window.
 window = 0
 
-# Shapes
-triangle = Shape(Vec3d(-1.5, 0.0, -6.0, 1.0), # Position
-[ # Vertices
-	Vec3d(0.0, 1.0, 0.0, 1.0), 			# Top
-	Vec3d(1.0, -1.0, 0.0, 1.0),			# Bottom Right
-	Vec3d(-1.0, -1.0, 0.0, 1.0),		# Bottom Left
-], [ # matrix stack
-	Mat3d.translationMatrix(0.0, -1.0, 0.0),
-	Mat3d.rotationZMatrix(0.02),
-	Mat3d.translationMatrix(0.0, 1.0, 0.0)
-]) 
+# Camera
+cameraFactory = CameraFactory()
+camera = cameraFactory.create(0, 0, -10)
 
-square = Shape(Vec3d(1.5, 0.0, -6.0, 1.0), # Position
-[ # Vertices
-	Vec3d(-1.0, 1.0, 0.0, 1.0),			# Top Left
-	Vec3d(1.0, 1.0, 0.0, 1.0),			# Top Right
-	Vec3d(1.0, -1.0, 0.0, 1.0),			# Bottom Right
-	Vec3d(-1.0, -1.0, 0.0, 1.0)			# Bottom Left
-], [ # matrix stack
-	Mat3d.rotationZMatrix(0.1)
-])
+# Main Scene
+mainScene = MainScene(camera)
+mainScene.init()
 
 # A general OpenGL initialization function.  Sets all of the initial parameters. 
 def InitGL(Width, Height):				# We call this right after our OpenGL window is created.
@@ -72,61 +68,29 @@ def ReSizeGLScene(Width, Height):
 
 # The main drawing function. 
 def DrawGLScene():
-	global triangle, square
+	global mainScene
 
-	# update shape positions
-	triangle.applyMatrixStack()
-	square.applyMatrixStack()
+	# === Update ===
+	camera.update()
+	mainScene.update()
 
+	# === Render ===
 	# Clear The Screen And The Depth Buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-	glLoadIdentity()					# Reset The View 
 
-	# Move Left 1.5 units and into the screen 6.0 units.
-	glTranslatef(triangle.pos.x, triangle.pos.y, triangle.pos.z)
+	# render scene
+	mainScene.render()
 
-	c1 = Vec3d(1.0, 0.0, 0.0, 0.0) 		# Red
-	c2 = Vec3d(0.0, 1.0, 0.0, 0.0)		# Green
-	c3 = Vec3d(0.0, 0.0, 1.0, 0.0)		# Blue
-
-	# Since we have smooth color mode on, this will be great for the Phish Heads :-).
-	# Draw a triangle
-	glBegin(GL_POLYGON)
-	glColor3f(c1.x, c1.y, c1.z)
-	glVertex3f(triangle.vertices[0].x, triangle.vertices[0].y, triangle.vertices[0].z)
-	glColor3f(c2.x, c2.y, c2.z)
-	glVertex3f(triangle.vertices[1].x, triangle.vertices[1].y, triangle.vertices[1].z)
-	glColor3f(c3.x, c3.y, c3.z)
-	glVertex3f(triangle.vertices[2].x, triangle.vertices[2].y, triangle.vertices[2].z)
-	glEnd()
-
-	# Move back to origin
-	glTranslatef(-triangle.pos.x, -triangle.pos.y, -triangle.pos.z)
-	# End of triangle
-
-	# Move Right 1.5 units.
-	glTranslatef(square.pos.x, square.pos.y, square.pos.z)
-
-	# Color of square
-	c = Vec3d(0.3, 0.5, 1.0, 0.0) 	# Bluish shade
-
-	# Draw a square (quadrilateral)
-	glColor3f(c.x, c.y, c.z)
-	glBegin(GL_QUADS)
-	glVertex3f(square.vertices[0].x, square.vertices[0].y, square.vertices[0].z)          
-	glVertex3f(square.vertices[1].x, square.vertices[1].y, square.vertices[1].z)
-	glVertex3f(square.vertices[2].x, square.vertices[2].y, square.vertices[2].z)
-	glVertex3f(square.vertices[3].x, square.vertices[3].y, square.vertices[3].z)
-	glEnd()
-
-	#  since this is double buffered, swap the buffers to display what just got drawn. 
+	# since this is double buffered, swap the buffers to display what just got drawn. 
 	glutSwapBuffers()
 
 # The function called whenever a key is pressed. Note the use of Python tuples to pass in: (key, x, y)  
 def keyPressed(*args):
-	# If escape is pressed, kill everything.
+    global mainScene
+    mainScene.keyPressed(*args)
+    # If escape is pressed, kill everything.
     if args[0] == ESCAPE:
-	    sys.exit()
+        sys.exit()
 
 def main():
 	global window
@@ -150,7 +114,7 @@ def main():
 	# Okay, like the C version we retain the window id to use when closing, but for those of you new
 	# to Python (like myself), remember this assignment would make the variable local and not global
 	# if it weren't for the global declaration at the start of main.
-	window = glutCreateWindow("Jeff Molofee's GL Code Tutorial ... NeHe '99")
+	window = glutCreateWindow("Sems3d")
 
    	# Register the drawing function with glut, BUT in Python land, at least using PyOpenGL, we need to
 	# set the function pointer and invoke a function to actually register the callback, otherwise it
@@ -175,7 +139,6 @@ def main():
 	# Start Event Processing Engine	
 	glutMainLoop()
 
-
 # Print message to console, and kick off the main to get it rolling.
-print "Hit ESC key to quit."
+print("Hit ESC key to quit.")
 main()
