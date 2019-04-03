@@ -5,7 +5,7 @@
 from scene import Scene
 from linear.mat3d import Mat3D
 
-# Implementation of main scene that includes basically one object in the middle of the scene.
+# Implementation of main scene that includes basically one object in the middle of the scene and one camera.
 class MainScene(Scene):
 
     def __init__(self):
@@ -35,8 +35,8 @@ class MainScene(Scene):
         elif key == 'r':
             self.obj.transform.reset()
 
+    # continuous rotation for testing purposes
     def update(self):
-        # for testing purposes
         # self.obj.transform.rotateX(1)
         # self.mainCamera.transform.rotateX(1)
         pass
@@ -44,7 +44,9 @@ class MainScene(Scene):
     def render(self):
         self.obj.draw(self.mainCamera)
 
+    # helper method for subdivision (subdivision could be implemented more efficiently)
     def subdivide(self, subdivisionLevel):
+        print("subdivision level: " + str(self.subdivisionLevel))
         self.obj = self.objectParser.create(self.objDest)
         # start from level 2 since level 1 subdivision is equal to object itself.
         for i in range(subdivisionLevel - 1):
