@@ -10,6 +10,7 @@
 # https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glPushMatrix.xml
 # http://makble.com/opengl-matrix-stacks-and-current-matrix
 # https://www.glprogramming.com/red/chapter03.html
+# https://learnopengl.com/Getting-started/Camera
 
 import sys
 from OpenGL.GL import *
@@ -24,7 +25,7 @@ ESCAPE = '\033'
 window = 0
 
 if len(sys.argv) != 2:
-    print("object is missing!\nusage: python assignment3.py <objectname>.obj")
+    print(".obj file is missing!\nusage: python assignment3.py <objectname>.obj")
     sys.exit()
 
 # Main Scene

@@ -5,7 +5,8 @@
 from linear.vec3d import Vec3D
 from linear.mat3d import Mat3D
 
-# This class basically defines a space. Since objects like camera can use this object, naming as 'Transform' is better then 'Space'.
+# This class basically defines a space. Since any object (e.g. camera) can use this class, 
+# naming as 'Transform' is better then 'Space'. The code is self explanatory.
 class Transform(object):
 
     def __init__(self, position, rotation, scaler):

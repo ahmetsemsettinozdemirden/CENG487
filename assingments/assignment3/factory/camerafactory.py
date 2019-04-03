@@ -9,6 +9,7 @@ from camera import Camera
 class CameraFactory(object):
 
     def create(self, x, y, z):
+        # creates and translates the camera
         camera = Camera(Transform(Vec3D(0.0, 0.0, 0.0, 1.0), Vec3D(0.0, 0.0, 0.0, 1.0), Vec3D(1.0, 1.0, 1.0, 1.0)))
         camera.transform.translate(x, y, z)
         return camera

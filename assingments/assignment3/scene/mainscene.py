@@ -3,25 +3,21 @@
 # StudentNo: 230201043
 # Date: 04-2019
 from scene import Scene
-from factory.objectparser import ObjectParser
-from factory.camerafactory import CameraFactory
 from linear.mat3d import Mat3D
 
+# Implementation of main scene that includes basically one object in the middle of the scene.
 class MainScene(Scene):
 
     def __init__(self):
         super(MainScene, self).__init__()
-        self.cameraFactory = CameraFactory()
-        self.objectParser = ObjectParser()
         self.subdivisionLevel = 1
 
     def init(self, objDest):
-        self.mainCamera = self.cameraFactory.create(0.0, 0.0, -10.0)
-        self.obj = self.objectParser.create(objDest)
+        self.mainCamera = self.createCamera(0.0, 0.0, -10.0)
+        self.obj = self.createObject(objDest)
         self.objDest = objDest
 
     def keyPressed(self, key):
-        # TODO: subdivision
         if key == '+' and self.subdivisionLevel < 10:
             self.subdivisionLevel += 1
             self.subdivide(self.subdivisionLevel)
@@ -40,6 +36,7 @@ class MainScene(Scene):
             self.obj.transform.reset()
 
     def update(self):
+        # for testing purposes
         # self.obj.transform.rotateX(1)
         # self.mainCamera.transform.rotateX(1)
         pass

@@ -4,7 +4,7 @@
 # Date: 04-2019
 import math
 from linear.vec3d import Vec3D
-from model3d import Model3D
+from model.model3d import Model3D
 from transform import Transform
 
 # References:
@@ -58,7 +58,7 @@ class SphereFactory(object):
         for i in range(len(faces)):
             faceColors.append([0.8, 0.8, 1.0])
 
-        return Model3D(Transform(Vec3D(0.0, 0.0, 0.0, 1.0), Vec3D(0.0, 0.0, 0.0, 1.0), Vec3D(1.0, 1.0, 1.0, 1.0)), vertices, faces, faceColors)
+        return Model3D(Transform(Vec3D(0.0, 0.0, 0.0, 1.0), Vec3D(0.0, 0.0, 0.0, 1.0), Vec3D(1.0, 1.0, 1.0, 1.0)), faces)
 
 
 
