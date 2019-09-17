@@ -51,3 +51,7 @@ class MainScene(Scene):
         # start from level 2 since level 1 subdivision is equal to object itself.
         for i in range(subdivisionLevel - 1):
             self.obj.subdivide()
+
+    @staticmethod
+    def someFunction(a, b):
+        pass

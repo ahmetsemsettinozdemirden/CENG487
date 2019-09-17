@@ -8,10 +8,10 @@
             "name": "Python: app (Integrated Terminal)",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceRoot}/assignment3.py",
+            "program": "${workspaceRoot}/assignment4.py",
             "console": "integratedTerminal",
             "args": [
-                "objects/ecube.obj"
+                "objects/tori.obj"
             ]
         },
         {
